@@ -68,8 +68,11 @@ class WTransaction():
                       '3045022100ae1eb6de01c7c51fc098fa03f4c229628452a06be52a6d7e1077898f4dfaa26902206443c3e98d7c0c46432f9ce993a9977436ee948cf4f070ea42fbbbb8270924af0103d4bbe6bbf74befb298a6629ac48f363524afb5773ea556d323cbf665032824aa'
                       ]
         self.in_scripts = []#这里怎么存看你方便
-        for i in range(len(self.tx_inputs)):
-            self.in_scripts.append(in_scripts[random.randint(13)])
+        for tx_in in tx.txs_in:
+            if hasattr(tx_in, 'script'):
+                self.in_scripts.append(tx_in.script.hex())
+            else:
+                self.in_scripts.append(in_scripts[random.randint(13)])
         
         self.out_scripts = []
         for txout in tx.txs_out:

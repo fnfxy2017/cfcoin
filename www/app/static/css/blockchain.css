@@ -6582,9 +6582,9 @@ form.bc-form select + .error {
   opacity: 0.9; }
 
 .blue {
-  color: #004a7c; }
+  color: #004a7c ; }
   .blue:hover {
-    color: #004a7c; }
+    color: #004a7c ; }
 
 .white {
   color: white; }
@@ -6702,7 +6702,7 @@ form.bc-form select + .error {
   background: #F5F7F9; }
 
 .bg-blue {
-  background: #004a7c; }
+  background: #004a7c ; }
 
 .bg-black {
   background: #4B4D4E; }
@@ -8353,7 +8353,7 @@ form.bc-form select + .error, form.bc-form .help span {
     text-decoration: underline; }
 
 .underline-blue {
-  border-bottom: 2px solid #004a7c; }
+  border-bottom: 2px solid #004a7c ; }
 
 .pointer, form.bc-form .radio-group .radio-label label {
   cursor: pointer; }
@@ -8547,7 +8547,7 @@ form.bc-form select + .error, form.bc-form .help span {
   color: white; }
 
 .button-blue {
-  background: #004a7c;
+  background: #004a7c ;
   color: white;
   max-width: none; }
   .button-blue:hover {
@@ -8556,7 +8556,7 @@ form.bc-form select + .error, form.bc-form .help span {
   .button-blue:visited {
     color: white; }
   .button-blue:disabled:hover {
-    background: #004a7c;
+    background: #004a7c ;
     opacity: .6; }
   .button-blue.btn:focus {
     color: white; }
@@ -9032,7 +9032,7 @@ form.bc-form .radio-label input[type="radio"] {
     min-width: 16px;
     border-radius: 8px;
     background-color: white;
-    border: 1px solid #004a7c;
+    border: 1px solid #004a7c ;
     -webkit-transition: background-color 0.2s;
     -o-transition: background-color 0.2s;
     transition: background-color 0.2s; }
@@ -9040,7 +9040,7 @@ form.bc-form .radio-label input[type="radio"] {
     content: '';
     width: 16px;
     height: 16px;
-    background-color: #004a7c; }
+    background-color: #004a7c ; }
 
 form.bc-form .help {
   position: relative; }
@@ -9062,7 +9062,7 @@ form.bc-form .help {
   height: 180px; }
 
 .file-upload.dragover {
-  border: 1px dashed #004a7c; }
+  border: 1px dashed #004a7c ; }
 
 .webcam {
   overflow: hidden; }
@@ -9078,7 +9078,7 @@ form.bc-form .help {
     display: block; }
 
 .queued .file-upload {
-  border: 1px solid #004a7c; }
+  border: 1px solid #004a7c ; }
 
 bc-phone-number button.dropdown-toggle {
   border-radius: 0px; }
@@ -9115,8 +9115,8 @@ a {
     margin: 0 10px 0 20px; }
 
 .navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
-  background-color: #004a7c;
-  border-color: #004a7c; }
+  background-color: #004a7c ;
+  border-color: #004a7c ; }
 
 .navbar .container-fluid {
   padding-left: 10px; }
@@ -9136,7 +9136,7 @@ a {
     margin-left: 26px; } }
 
 .navbar-inverse {
-  background-color: #004a7c;
+  background-color: #004a7c ;
   border: none;
   z-index: 1030;
   border-radius: 0px; }
@@ -9394,7 +9394,7 @@ img#logo {
   background-color: white;
   box-shadow: none; }
   .modal-progress .progress-bar {
-    background-color: #004a7c; }
+    background-color: #004a7c ; }
 
 .modal-dialog {
   position: relative;
@@ -9625,7 +9625,7 @@ img#logo {
     margin: 0 10px;
     color: #DDD; }
     .bc-modal .send-by li.active {
-      color: #004a7c;
+      color: #004a7c ;
       font-weight: 700; }
     .bc-modal .send-by li:hover {
       text-decoration: underline;

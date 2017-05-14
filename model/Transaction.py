@@ -43,7 +43,7 @@ from pycoin.tx.exceptions import ValidationFailureError, SolvingError, \
     BadSpendableError
 from pycoin.tx.pay_to import script_obj_from_script
 from pycoin.tx.pay_to.ScriptPayToScript import ScriptPayToScript
-from pycoin.tx.script import tools
+from pycoin.tx.script import tools, opcodes
 from pycoin.tx.script.check_signature import parse_signature_blob
 from pycoin.tx.script.der import UnexpectedDER
 from pycoin.tx.script.disassemble import disassemble_scripts, \
@@ -204,6 +204,8 @@ class Transaction(object):
         self.txs_out = txs_out
         self.lock_time = lock_time
         self.state = state
+        if None == unspents:
+            unspents = TransactionDao.unspents_from_db(txs_in)
         self.unspents = unspents or []
         for tx_in in self.txs_in:
             assert type(tx_in) == self.TransactionIn
@@ -367,7 +369,7 @@ class Transaction(object):
 
         # In case concatenating two scripts ends up with two codeseparators,
         # or an extra one at the end, this prevents all those possible incompatibilities.
-        tx_out_script = tools.delete_subscript(tx_out_script, int_to_bytes(171))
+        tx_out_script = tools.delete_subscript(tx_out_script, int_to_bytes(opcodes.OP_HASH160))
 
         # blank out other inputs' signatures
         txs_in = [self._tx_in_for_idx(i, tx_in, tx_out_script, unsigned_txs_out_idx)
@@ -490,8 +492,8 @@ class Transaction(object):
             hash_type = self.SIGHASH_ALL
         tx_in = self.txs_in[tx_in_idx]
 
-        is_p2h = (len(tx_out_script) == 23 and byte_to_int(tx_out_script[0]) == 169 and
-                  byte_to_int(tx_out_script[-1]) == 135)
+        is_p2h = (len(tx_out_script) == 23 and byte_to_int(tx_out_script[0]) == opcodes.OP_HASH160 and
+                  byte_to_int(tx_out_script[-1]) == opcodes.OP_EQUAL)
         if is_p2h:
             hash160 = ScriptPayToScript.from_script(tx_out_script).hash160
             p2sh_lookup = kwargs.get("p2sh_lookup")

@@ -1,10 +1,11 @@
-from flask import render_template, request
+import time
+import traceback
 
-from www.app import datass,datas
+from flask import render_template, request
+from pycoin.serialize import h2b
 
 from www.app import app
-from pycoin.serialize import h2b
-import time
+from www.app import datass
 
 
 ALERT = '''数据解析错误！'''
@@ -23,6 +24,7 @@ def blocks():
         blocks = datass.get_blocks()
         return render_template("blocks.html", blocks = blocks)
     except Exception:
+        traceback.print_exc()
         return render_template("index.html", alert=ALERT) 
     
 @app.route('/block')
@@ -36,6 +38,7 @@ def block():
         block = datass.get_block_info(block_hash)
         return render_template("block.html", block = block)
     except Exception:
+        traceback.print_exc()
         return render_template("index.html", alert=ALERT) 
     
 @app.route('/wallet', methods = ['GET', ])
@@ -47,9 +50,11 @@ def wallet():
             my_utxos = datass.get_my_used_out_txs()
         elif display == 'unspent':
             my_utxos = datass.get_my_unused_out_txs()
-        else:
+        elif display == 'all':
             my_utxos = datass.get_my_all_out_txs()
             display = 'all'
+        else:
+            my_utxos = datass.get_my_unused_out_txs()
         my_keys = datass.get_keys()
         
     #     my_utxos = get_my_utxos()
@@ -58,6 +63,7 @@ def wallet():
     #     
         return render_template("wallet.html", my_keys = my_keys, my_utxos = my_utxos) #, my_utxos = my_utxos, launched_projects = launched_projects, participated_projects = participated_projects)
     except Exception:
+        traceback.print_exc()
         return render_template("index.html", alert=ALERT) 
  
 # @app.route('/indextest')
@@ -93,6 +99,7 @@ def CF_projects():
         projects = datass.get_CF_projects()  
         return render_template("CF_projects.html", projects = projects)  
     except Exception:
+        traceback.print_exc()
         return render_template("index.html", alert=ALERT) 
 
 @app.route('/CF_project_detail')
@@ -102,6 +109,7 @@ def CF_project_detail():
         project = datass.get_CF_project(project_id)  
         return render_template("CF_project_detail.html", project = project) 
     except Exception:
+        traceback.print_exc() 
         return render_template("index.html", alert=ALERT) 
 
 @app.route('/tx') 
@@ -153,7 +161,8 @@ def action():
             addrs = request.form.getlist('publicAddrToValueArray[]') 
             coin_values = request.form.getlist('coin_value[]')
             for pubkey, coin in zip(addrs, coin_values):
-                publicAddrToValueArray.append([pubkey, int(coin)])
+                if coin != '':
+                    publicAddrToValueArray.append([pubkey, int(coin)])
             res = datass.createNormalBitCoinTx(pre_out_ids, publicAddrToValueArray)
             
         elif action == 'createNewBitcoinTx':
@@ -163,6 +172,7 @@ def action():
             res = datass.createNewBitcoinTx([[pubkey, int(coin)]])
     except Exception:
         res = None
+        traceback.print_exc() 
     if not res:
         alert = '''交易生成失败！请重新检查参数。'''
     else:

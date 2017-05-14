@@ -11,12 +11,13 @@ class SecretKey(object):
     classdocs
     '''
 
-    def __init__(self, publicKey, pubicAddress, privateKey='', cert = '', uid = 0):
+    def __init__(self, publicKey, pubicAddress, privateKey='', cert = '', uid = 0, sec_num=0):
         self.publicKey = publicKey
         self.privateKey = privateKey
         self.pubicAddress = pubicAddress
         self.cert = cert
         self.uid = uid
+        self.sec_num = sec_num
 #         if '' != privateKey:            
 #             self.key_obj = Key(public_pair=[publicKey, privateKey])
 #             self.pubicAddress = self.key_obj.address()
@@ -49,6 +50,6 @@ E+FOPdz0PSfhJOsKHY+AXFWPVrKfOimfznDYHpyQ0G6X9s31MAjF1JddRG6Xo1Vl
 Ftg=
 -----END CERTIFICATE-----
 '''
-        return cls(publicKey, pubicAddress, privateKey, cert)
+        return cls(publicKey, pubicAddress, privateKey, cert, sec_num)
 #         self.pubicAddress = key_obj.address()
 #         self.key_obj = key_obj

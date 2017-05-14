@@ -51,7 +51,8 @@ class CoinSqlite3(object):
                 publicKey text not null,
                 privateKey text,
                 pubicAddress text not null,
-                cert text
+                cert text,                
+                sec_num integer
                 );"""
         c = self._exec_sql(SQL)
         self.db.commit()   

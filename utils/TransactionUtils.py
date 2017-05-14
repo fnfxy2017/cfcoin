@@ -7,8 +7,10 @@ import io
 import time
 import warnings
 
+from pycoin.key import Key
 from pycoin.serialize import h2b
 from pycoin.serialize.bitcoin_streamer import parse_struct
+from pycoin.tx.pay_to import script_obj_from_script
 from pycoin.ui import standard_tx_out_script
 
 import Constants
@@ -18,8 +20,9 @@ from model.Transaction import Transaction
 from model.TransactionCF import TransactionCF, CFHeader
 from model.TransactionIn import TransactionIn
 from model.TransactionOut import TransactionOut
-# from socketInfo import SendMessage
 
+
+# from socketInfo import SendMessage
 def parse(f):
     tx_type, = parse_struct("L", f)
     if 0x01 == tx_type:
@@ -129,6 +132,21 @@ def __get_tx_outs(publicAddrToValueArray):
     publicAddrToValue 字典  key 公钥地址  value数量
 '''    
 
+
+def signTx(tx, pre_out_ids=[]):
+    pubkey_addr = ''
+    outscript = r''
+    for pre_out_id in pre_out_ids:
+        if '' != pre_out_id:
+            pre_out = TransactionOutDao.searchById(pre_out_id)
+            pubkey_addr = pre_out.address()
+            outscript = pre_out.script
+    if '' != pubkey_addr:
+        secretKey = SecretKeyDao.searchByPubAddr(pubkey_addr)
+        key = Key(public_pair=[int(secretKey.publicKey), int(secretKey.privateKey)])
+        tx.sign({script_obj_from_script(outscript).hash160:[secretKey.sec_num, key.public_pair(), True],})
+    return tx
+
 def createFirstTransaction(publicAddrToValueArray):
     tx_in = TransactionIn.coinbase_tx_in();
     tx_ins = []
@@ -136,6 +154,9 @@ def createFirstTransaction(publicAddrToValueArray):
     tx_outs = __get_tx_outs(publicAddrToValueArray)
     
     tx = Transaction(Constants.VERSION, tx_ins, tx_outs, Constants.LOCK_TIME, None, 0)
+    if len(tx_ins) != 0:
+        tx = signTx(tx)
+        tx.check()
     if verify(tx):
         insert(tx)
         # 广播新交易
@@ -144,8 +165,13 @@ def createFirstTransaction(publicAddrToValueArray):
 def createTransaction(pre_out_ids, publicAddrToValueArray):
     tx_ins = __get_tx_ins(pre_out_ids)
     tx_outs = __get_tx_outs(publicAddrToValueArray)
+        
     
     tx = Transaction(Constants.VERSION, tx_ins, tx_outs, Constants.LOCK_TIME, None, 0)
+    if len(tx_ins) != 0:
+        tx = signTx(tx, pre_out_ids)
+        tx.check()
+            
     if verify(tx):
         insert(tx)
         # 广播新交易
@@ -176,6 +202,9 @@ def createNormalCFTransaction(pre_out_ids, pre_cf_hash, spendValue, otherPublicA
     tx_outs.insert(0, cfout)
     
     cf =  TransactionCF(cf_header, Constants.VERSION, tx_ins, tx_outs, Constants.LOCK_TIME, None, 0)
+    if len(tx_ins) != 0:
+        cf = signTx(cf, pre_out_ids)
+        cf.check()
     if verify(cf):
         insert(cf)
         return cf
@@ -198,6 +227,9 @@ def createFirstCFTransaction(target_amount, pubkey_addr, end_time, pre_out_ids_f
     lack_amount = target_amount
     cf_header = CFHeader(original_hash, target_amount, pubkey_addr, end_time, pre_hash, lack_amount, cert)
     cf = TransactionCF(cf_header, Constants.VERSION, tx_ins, tx_outs, Constants.LOCK_TIME)
+    if len(tx_ins) != 0:
+        cf = signTx(cf, pre_out_ids_for_fee)
+        cf.check()
     if verify(cf):
         insert(cf)
         return cf
